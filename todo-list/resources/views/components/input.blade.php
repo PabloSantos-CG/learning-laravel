@@ -1,0 +1,1 @@
+<input class="input-newtask" type="text" placeholder="Digite uma nova tarefa">
