@@ -3,28 +3,31 @@
 @section('content')
 
 <div class="subcontainer">
-    <ul class="top-box task-list">
-        <li>
-            <span>Title</span>
+    <ul class="top-box task-list scroll-container">
+        @foreach ($data as $task)
+            <li>
+                <span class="{{ $task->status == 'concluído' ? 'risk' : '' }}">{{ $task->title }}</span>
+                <div class="last-box-item">
+                    <form action="" method="post">
+                        @csrf
+                        <button class="flex-center container-btn-check" type="submit">
+                            <img src="{{ asset('icons/Check-circle.svg') }}">
+                        </button>
+                    </form>
 
-            <div class="last-box-item">
-                <form action="" method="post">
-                    <button class="flex-center container-btn-check" type="submit">
-                        <img src="{{ asset('icons/Check-circle.svg') }}">
-                    </button>
-                </form>
+                    <a class="edit-task-buttom flex-center" href="">
+                        <img src="{{ asset('icons/Edit.svg') }}">
+                    </a>
 
-                <a class="edit-task-buttom flex-center" href="">
-                    <img src="{{ asset('icons/Edit.svg') }}">
-                </a>
-
-                <form action="" method="post">
-                    <button class="flex-center container-btn-delete" type="submit">
-                        <img src="{{ asset('icons/delete.svg') }}">
-                    </button>
-                </form>
-            </div>
-        </li>
+                    <form action="" method="post">
+                        @csrf
+                        <button class="flex-center container-btn-delete" type="submit">
+                            <img src="{{ asset('icons/delete.svg') }}">
+                        </button>
+                    </form>
+                </div>
+            </li>
+        @endforeach
     </ul>
 
     <form class="bottom-box" action="" method="post">

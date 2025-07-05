@@ -25,10 +25,13 @@ html, body {
     align-items: center;
 }
 
+.risk {
+    text-decoration: line-through;
+}
+
 /* scroll */
 
 .scroll-container {
-  max-height: 300px;          /* Altura máxima da caixa */
   overflow-y: auto;           /* Habilita rolagem vertical quando necessário */
   overflow-x: hidden;         /* Oculta rolagem horizontal */
   
@@ -95,6 +98,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #686868;
     border: 1px solid #E9E9E9;
     border-radius: 12px;
     box-shadow: 0px 1px 3px rgb(0, 0, 0, 25%);
