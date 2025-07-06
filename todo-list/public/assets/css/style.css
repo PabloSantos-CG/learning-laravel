@@ -52,6 +52,40 @@ html, body {
   background: transparent;    /* Fundo da trilha */
 }
 
+/* style para checkbox */
+
+.circle-checkbox {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid #555;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .circle-checkbox:checked {
+    background-color: #4caf50;
+    border-color: #4caf50;
+  }
+
+  .circle-checkbox:checked::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -60%) rotate(45deg);
+  }
+
 /* uso normal */
 
 .main-container {
@@ -149,7 +183,7 @@ html, body {
     outline: 1px solid #d8d8d8;
 }
 
-.bottom-box button {
+.btn-submit {
     cursor: pointer;
     padding: 8px;
     color: #fff;
@@ -160,7 +194,66 @@ html, body {
     font-weight: bold;
 }
 
-.bottom-box button:hover {
+.btn-submit:hover {
     background-color: #0db6b3;
+
+}
+
+#form-edit {
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0px 4px 4px rgb(0, 0, 0, 25%);
+}
+
+#top-box-form-edit {
+    display: flex;
+    gap: 26px;
+}
+
+#title-label {
+    flex: 2;
+    
+}
+
+#container-select-status {
+    flex: 1;
+}
+
+.direction-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    padding: 8px;
+    color: #8E8E8E;
+    border: 1px solid #E9E9E9;
+    border-radius: 6px;
+}
+
+.input:focus {
+    outline: 1px solid #d8d8d8;
+}
+
+.input-select {
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #E9E9E9;
+    border-radius: 6px;
+}
+
+.btn-cancel {
+    cursor: pointer;
+    padding: 8px;
+    color: #616060;
+    background-color: #fff;
+    border: 1px solid #8e8e8e77;
+    border-radius: 6px;
+    box-shadow: 0px 2px 2px rgb(0, 0, 0, 25%);
+    font-weight: bold;
+}
+
+.btn-cancel:hover {
+    background-color: #e2e2e2;
 
 }

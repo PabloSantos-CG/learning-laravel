@@ -30,7 +30,7 @@ class TaskController extends Controller
     {
         $data = [
             'title' => $request->input('title'),
-            'is_pending' => false
+            'is_pending' => true
         ];
 
         $this->task->fill($data);
@@ -39,20 +39,42 @@ class TaskController extends Controller
         return \redirect(\route('index'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+    public function update(Request $request, string $id) {
+        $cancel = $request->input('cancel');
+        
+        if(!empty($cancel)) {
+            return \redirect(\route('index'));
+        }
+
+        $is_pending = $request->input('is_pending');
+        
+        $task = $this->task->query()->find($id);
+
+        if(!empty($is_pending)) {
+            $task->is_pending = \filter_var($is_pending, \FILTER_VALIDATE_BOOL);
+        }
+
+        $task->title = $request->input('title');
+        $task->save();
+        
+        return \redirect(\route('index'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    
+    public function editTask(string $id)
     {
-        //
+        $task = $this->task->query()->find($id)->toArray();
+
+        return \view('edit_task', \compact('task'));
+    }
+
+    public function changeCheckbox(string $id)
+    {
+        $task = $this->task->query()->findOrFail($id);
+        $task->is_pending = !$task->is_pending;
+        $task->save();
+
+        return \redirect(\route('index'));
     }
 
     /**
@@ -60,6 +82,8 @@ class TaskController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $task = $this->task->query()->findOrFail($id);
+        $task->delete();
+        return \redirect(\route('index'));
     }
 }
