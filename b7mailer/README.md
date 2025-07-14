@@ -1,1 +1,0 @@
-Apenas um teste enquanto leio a documentação sobre envio de e-mails e filas.
