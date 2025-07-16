@@ -35,6 +35,14 @@ class AuthController extends Controller
             ];
         }
 
+        $userExists = User::where('email', $email)->first();
+        if ($userExists) {
+            return [
+                'status' => 'error',
+                'message' => 'user exists',
+            ];
+        }
+
         $passwordEncripted = \password_hash($password, PASSWORD_BCRYPT);
 
         $emailIsValid = \filter_var($email, \FILTER_VALIDATE_EMAIL);
@@ -53,22 +61,31 @@ class AuthController extends Controller
             ];
         }
 
-        $token = Auth::attempt([
-            'email' => $email,
-            'password' => $passwordEncripted,
-        ]);
+        
 
         $user = new User();
         $user->name = $name;
         $user->email = $email;
         $user->password = $passwordEncripted;
         $user->birthdate = $birthdate;
-        $user->token = $token;
         $user->save();
+
+        $token = \auth('api')->attempt([
+            'email' => $email,
+            'password' => $password,
+        ]);
+        
+        if (!$token) {
+            return [
+                'status' => 'error',
+                'message' => 'authentication failed',
+            ];
+        }
 
         return [
             'status' => 'success',
             'message' => 'created user',
+            'token' => $token,
         ];
     }
 }
