@@ -13,4 +13,8 @@ class UserController extends Controller
         $this->middleware('auth:api');
         $this->loggedUser = Auth::user();
     }
+
+    public function update(Request $request) {
+        // implementar update com for para evitar ifs
+    }
 }
