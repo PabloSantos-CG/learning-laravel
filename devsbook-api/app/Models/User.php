@@ -9,6 +9,12 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = ['name', 'email', 'password', 'birthdate'];
     protected $hidden = ['password', 'token'];
 
     public function getJWTIdentifier()

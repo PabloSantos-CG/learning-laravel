@@ -16,8 +16,8 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
 Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
-Route::post('/user', [AuthController::class, 'create']);
-Route::put('/user', [UserController::class, 'update']);
+Route::post('/user', [UserController::class, 'create']);
+Route::put('/user/{id}', [UserController::class, 'update']);
 // Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
 // Route::post('/user/cover', [UserController::class, 'updateCover']);
 
