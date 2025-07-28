@@ -7,6 +7,8 @@ use App\Services\AuthService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class UserController extends Controller
 {
@@ -110,6 +112,85 @@ class UserController extends Controller
         return \response()->json([
             'status' => 'success',
             'message' => 'updated user'
+        ], 200);
+    }
+
+    /**
+     * adicionar avatar a um usuário específico
+     */
+    public function updateAvatar(Request $request)
+    {
+        $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+
+        $image = $request->file('avatar');
+
+        if (!$image) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'image not found',
+            ], 400);
+        }
+
+        if (!\in_array($image->getMimeType(), $allowedTypes)) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'content not allowed',
+            ], 400);
+        }
+
+        $destinationPath = \storage_path('images/avatar');
+        $newFileName = \md5(\date('Y-m-d') . '_' . \rand(0, 9999)) . '.jpg';
+        $newPath = $destinationPath . \DIRECTORY_SEPARATOR . $newFileName;
+
+        $imageManager = new ImageManager(new Driver());
+
+        $imageManager->read($image->path())->cover(200, 200)->save($newPath);
+
+        $user = User::find($this->loggedUser['id']);
+        $user->avatar = $newPath;
+        $user->save();
+
+        return \response()->json([
+            'status' => 'success',
+            'avatar_url' => \url($newPath),
+        ], 200);
+    }
+
+    public function updateCover(Request $request)
+    {
+        $allowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
+
+        $image = $request->file('cover');
+
+        if (!$image) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'image not found',
+            ], 400);
+        }
+
+        if (!\in_array($image->getMimeType(), $allowedTypes)) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'content not allowed',
+            ], 400);
+        }
+
+        $destinationPath = \storage_path('images/cover');
+        $newFileName = \md5(\date('Y-m-d') . '_' . \rand(0, 9999)) . '.jpg';
+        $newPath = $destinationPath . \DIRECTORY_SEPARATOR . $newFileName;
+
+        $imageManager = new ImageManager(new Driver());
+
+        $imageManager->read($image->path())->cover(800, 800)->save($newPath);
+
+        $user = User::find($this->loggedUser['id']);
+        $user->cover = $newPath;
+        $user->save();
+
+        return \response()->json([
+            'status' => 'success',
+            'cover_url' => \url($newPath),
         ], 200);
     }
 }

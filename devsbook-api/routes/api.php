@@ -18,8 +18,8 @@ Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 Route::post('/user', [UserController::class, 'create']);
 Route::put('/user/{id}', [UserController::class, 'update']);
-// Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
-// Route::post('/user/cover', [UserController::class, 'updateCover']);
+Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
+Route::post('/user/cover', [UserController::class, 'updateCover']);
 
 // // atenção nesses métodos repetidos
 // Route::get('/feed', [FeedController::class, 'read']);
