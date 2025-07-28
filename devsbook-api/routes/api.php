@@ -30,7 +30,7 @@ Route::post('/user/cover', [UserController::class, 'updateCover']);
 // Route::get('/user', [AuthController::class, 'read']);
 // Route::get('/user/{id}', [AuthController::class, 'read']);
 
-// Route::post('/feed', [FeedController::class, 'create']);
+Route::post('/feed', [FeedController::class, 'create']);
 
 // Route::post('/post/{id}/like', [PostController::class, 'like']);
 // Route::post('/post/{id}/comment', [PostController::class, 'comment']);
