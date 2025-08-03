@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\PostComment;
+use App\Models\User;
+use App\Models\UserRelation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Drivers\Imagick\Driver;
@@ -93,5 +96,60 @@ class FeedController extends Controller
             'status' => 'success',
             'message' => 'post added',
         ]);
+    }
+
+    public function read(Request $request)
+    {
+        $page = \intval($request->input('page'));
+        $perPage = 2;
+
+        // 1. pegar a lista de usuários que EU sigo
+        // - userRelations
+        $following = UserRelation::where(
+            'user_from',
+            $this->loggedUser['id']
+        )->count();
+
+
+        // 2. pegar os posts pela data (ordem decrescente)
+        // ->orderByDesc()
+        $postsOrderedDesc = Post::orderByDesc('created_at')
+            ->limit($perPage)->get()->toArray();
+
+        // 3. preencher informações adicionais
+        /* (
+            de quem é ? 
+            quantos likes ?
+            eu curti ?
+            lista de comentários !
+        )
+        */
+        $postResponse = [];
+        foreach ($postsOrderedDesc as $post) {
+            $user = User::find($post['id_user']);
+
+            $mounting = [];
+            $mounting['post'] = $post;
+            $mounting['username'] = $user->name;
+            $mounting['comments'] = [];
+
+            $postLikes = Post::where(
+                'id_post',
+                $post['id']
+            )->count();
+
+            $mounting['likes'] = $postLikes;
+
+            $comment = PostComment::where(
+                'id_post',
+                $post['id']
+            )->get();
+
+            if ($comment) $mounting['comments'] = $comment;
+
+            \array_push($postResponse, $mounting);
+        }
+
+        return \response()->json($postResponse);
     }
 }
