@@ -21,18 +21,12 @@ Route::put('/user/{id}', [UserController::class, 'update']);
 Route::post('/user/avatar', [UserController::class, 'updateAvatar']);
 Route::post('/user/cover', [UserController::class, 'updateCover']);
 
-// // atenção nesses métodos repetidos
 Route::get('/feed', [FeedController::class, 'read']);
-// Route::get('/user/feed', [FeedController::class, 'userFeed']);
-// Route::get('/user/{id}/feed', [FeedController::class, 'userFeed']);
-
-// // atenção nesses métodos repetidos
-// Route::get('/user', [AuthController::class, 'read']);
-// Route::get('/user/{id}', [AuthController::class, 'read']);
+Route::get('/user/{id}/feed', [FeedController::class, 'userFeed']);
 
 Route::post('/feed', [FeedController::class, 'create']);
 
-// Route::post('/post/{id}/like', [PostController::class, 'like']);
-// Route::post('/post/{id}/comment', [PostController::class, 'comment']);
+Route::post('/post/{id}/like', [PostController::class, 'like']);
+Route::post('/post/{id}/comment', [PostController::class, 'createComment']);
+Route::delete('/post/{id}/comment', [PostController::class, 'deleteComment']);
 
-// Route::get('/search', [SearchController::class, 'search']);

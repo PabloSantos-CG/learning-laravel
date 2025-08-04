@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\PostComment;
+use App\Models\PostLike;
 use App\Models\User;
 use App\Models\UserRelation;
 use Illuminate\Http\Request;
@@ -98,32 +99,36 @@ class FeedController extends Controller
         ]);
     }
 
+    // (refatorar)
     public function read(Request $request)
     {
         $page = \intval($request->input('page'));
         $perPage = 2;
 
         // 1. pegar a lista de usuários que EU sigo
-        // - userRelations
-        $following = UserRelation::where(
+        $followingList = UserRelation::where(
             'user_from',
             $this->loggedUser['id']
-        )->count();
+        )->get();
+
+        $following = [];
+
+        foreach ($followingList as $userFollowing) {
+            $following[] = $userFollowing['user_to'];
+        }
+        $following[] = $this->loggedUser['id'];
 
 
         // 2. pegar os posts pela data (ordem decrescente)
-        // ->orderByDesc()
-        $postsOrderedDesc = Post::orderByDesc('created_at')
-            ->limit($perPage)->get()->toArray();
+        $postsOrderedDesc = Post::whereIn('id_user', $following)
+            ->orderByDesc('created_at')
+            ->offset($page * $perPage)
+            ->limit($perPage)
+            ->get();
+
+        $pageCount = \ceil(count($postsOrderedDesc) / $perPage);
 
         // 3. preencher informações adicionais
-        /* (
-            de quem é ? 
-            quantos likes ?
-            eu curti ?
-            lista de comentários !
-        )
-        */
         $postResponse = [];
         foreach ($postsOrderedDesc as $post) {
             $user = User::find($post['id_user']);
@@ -133,7 +138,7 @@ class FeedController extends Controller
             $mounting['username'] = $user->name;
             $mounting['comments'] = [];
 
-            $postLikes = Post::where(
+            $postLikes = PostLike::where(
                 'id_post',
                 $post['id']
             )->count();
@@ -147,9 +152,46 @@ class FeedController extends Controller
 
             if ($comment) $mounting['comments'] = $comment;
 
-            \array_push($postResponse, $mounting);
+            $postResponse[] = $mounting;
         }
 
-        return \response()->json($postResponse);
+        $totalFollowing = \count($following);
+
+        return \response()->json([
+            'following' => $totalFollowing ? $totalFollowing - 1 : $totalFollowing,
+            'post_response' => $postResponse,
+            'page' => $page,
+            'page_count' => $pageCount,
+        ]);
     }
+
+    // código que se repete
+    public function userFeed(Request $request, string $id)
+    {
+        $page = \intval($request->input('page'));
+        $perPage = 2;
+
+        if (!User::where('id', $id)->exists()) {
+            return \response()->json([
+                'status' => 'error',
+                'message' => 'user not found',
+            ], 404);
+        }
+
+        $postsOrderedDesc = Post::where('id_user', $id)
+            ->orderByDesc('created_at')
+            ->offset($page * $perPage)
+            ->limit($perPage)
+            ->get();
+
+        $pageCount = \ceil(count($postsOrderedDesc) / $perPage);
+
+        return \response()->json([
+            'post_response' => $postsOrderedDesc,
+            'page' => $page,
+            'page_count' => $pageCount,
+        ]);
+    }
+
+
 }
